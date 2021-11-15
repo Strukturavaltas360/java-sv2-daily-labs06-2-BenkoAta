@@ -9,22 +9,20 @@ public class Main {
         PositiveNumberContainer container = new PositiveNumberContainer();
 
         double number;
-        do {
-            System.out.print("Írjon be egy pozitív valós számot! ");
-            try {
+        try {
+            do {
+                System.out.print("Írjon be egy pozitív valós számot! ");
                 number = scanner.nextDouble();
-            }
-            catch (InputMismatchException exception) {
-                System.out.println("Hibás szám, bevitel vége!");
-                break;
-            }
-            if (number > 0.0) {
-                container.addNumber(number);
-            } else {
-                System.out.println("Nem pozitív szám, bevitel vége!");
-                break;
-            }
-        } while (true);
+
+                if (number > 0.0) {
+                    container.addNumber(number);
+                } else {
+                    System.out.println("Nem pozitív szám, bevitel vége!");
+                }
+            } while (number > 0.0);
+        } catch (InputMismatchException exception) {
+            System.out.println("Hibás szám, bevitel vége!");
+        }
 
         System.out.println();
         System.out.println("A megadott pozitív számok: ");
