@@ -7,58 +7,35 @@ public class HangmanMain {
         new HangmanMain().run();
     }
 
-    private String wordToFind;
-    private String wordFound;
-    private int chances = 8;
-
-    HangmanMain () {
-        wordToFind = "csütörtök";
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < wordToFind.length(); i++) {
-            sb.append('_');
-        }
-        wordFound = sb.toString();
-    }
-
     private void run() {
-        boolean win = false;
-
+        HangmanLogic hangmanLogic = new HangmanLogic("csütörtök", 4);
         do {
-            String guess = askForGuess();
-            if (wordToFind.contains(guess)) {
-                System.out.println("Jó!");
-                wordFound = updateWordFound(wordToFind, wordFound, guess);
-                win = !wordFound.contains("_");
+            char guess;
+            try {
+                guess = askForGuess(hangmanLogic);
+                if (hangmanLogic.takeGuess(guess)) {
+                    System.out.println("Jó!");
+                } else {
+                    System.out.println("Rossz!");
+                }
+            } catch (IllegalStateException ise) {
+                System.out.println(ise.getMessage());
             }
-            else {
-                System.out.println("Rossz!");
-                chances--;
-            }
-        } while (!win && chances > 0);
-
-        if (win) {
-            System.out.println("Ügyes, nyertél!");
-        }
-        else {
-            System.out.println("Vesztettél");
-        }
+        } while (!hangmanLogic.finished());
+        System.out.println(hangmanLogic.won() ? "Ügyes, nyertél!" : "Vesztettél");
     }
 
-    private String askForGuess() {
+    private char askForGuess(HangmanLogic hangmanLogic) {
         Scanner scanner = new Scanner(System.in);
-        System.out.println(String.format("Itt tartunk: %s", wordFound));
-        System.out.println(String.format("Ennyit tippelhetsz még: %d", chances));
+        System.out.println(String.format("Itt tartunk: %s", hangmanLogic.getWordFound()));
+        System.out.println(String.format("Ennyit tippelhetsz még: %d", hangmanLogic.getChances()));
         System.out.print("Mi a következő tipped?: ");
-        return scanner.nextLine();
+        String input = scanner.nextLine();
+        if (input.length() == 1) {
+            return input.charAt(0);
+        } else {
+            throw new IllegalStateException("Hibás tipp!");
+        }
     }
 
-    private String updateWordFound(String wordToFind, String status, String guess) {
-        char[] chars = status.toCharArray();
-        for (int i = 0; i < chars.length; i++) {
-            if (wordToFind.charAt(i) == guess.charAt(0)) {
-                chars[i] = guess.charAt(0);
-            }
-        }
-        return new String(chars);
-    }
 }
